@@ -1,6 +1,18 @@
 import Speech
 import Foundation
 
+protocol SpeechRecognizerFactoryType {
+    func create() -> SpeechRecognizerType?
+}
+
+struct SpeechRecognizerFactory: SpeechRecognizerFactoryType {
+    let localeProvider: LocaleProviderType
+    
+    func create() -> SpeechRecognizerType? {
+        SFSpeechRecognizer(locale: localeProvider.locale)
+    }
+}
+
 protocol SpeechRecognizerType {
     var isAvailable: Bool { get }
     func requestAuthorization(_ handler: @escaping (SpeechRecognizerAuthorizationStatus) -> Void)
@@ -18,18 +30,6 @@ extension SFSpeechRecognizer: SpeechRecognizerType {
         type(of: self).requestAuthorization {
             handler($0.toSpeechRecognizerAuthorizationStatus())
         }
-    }
-}
-
-protocol SpeechRecognizerFactoryType {
-    func create() -> SpeechRecognizerType?
-}
-
-struct SpeechRecognizerFactory: SpeechRecognizerFactoryType {
-    let localeProvider: LocaleProviderType
-    
-    func create() -> SpeechRecognizerType? {
-        SFSpeechRecognizer(locale: localeProvider.locale)
     }
 }
 
