@@ -17,8 +17,9 @@ extension SFSpeechRecognitionResult: SpeechRecognitionResultType {
     }
     
     var words: [TranscribedWord] {
-        bestTranscription.segments.map { segment in
+        bestTranscription.segments.enumerated().map { index, segment in
             TranscribedWord(
+                id: index,
                 text: segment.substring,
                 startTime: segment.timestamp,
                 endTime: segment.timestamp + segment.duration,
