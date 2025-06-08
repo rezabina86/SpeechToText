@@ -5,6 +5,7 @@ struct SpeechToTextApp: App {
     init(container: ContainerType) {
         self.container = container
         configureDependencies(container)
+        self.viewModelFactory = container.resolve()
     }
     
     init() {
@@ -13,11 +14,12 @@ struct SpeechToTextApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: viewModelFactory.create())
         }
     }
     
     // MARK: - Privates
     private let container: ContainerType
     private var configureDependencies = injectDependencies
+    private let viewModelFactory: AppViewModelFactoryType
 }

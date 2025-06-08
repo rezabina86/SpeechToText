@@ -8,7 +8,7 @@ protocol TimerFactoryType {
 final class TimerFactory: TimerFactoryType {
     func makeTimer(interval: TimeInterval) -> AnyPublisher<Date, Never> {
         Timer
-            .publish(every: interval, on: .main, in: .default)
+            .publish(every: interval, on: .main, in: .common)
             .autoconnect()
             .eraseToAnyPublisher()
     }

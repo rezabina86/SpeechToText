@@ -9,6 +9,11 @@ struct TranscriptionTextViewState: Equatable {
         let index: Int
         let text: String
         
+        init(index: Int, text: String) {
+            self.index = index
+            self.text = text
+        }
+        
         var id: Int {
             index
         }

@@ -4,26 +4,29 @@ import AVFoundation
 
 enum AudioRecordingManagerState: Equatable {
     case idle
-    case error(AudioRecordingManager.AudioError)
+    case error(AudioRecorderManager.AudioError)
     case recording(audioURL: URL)
 }
 
-protocol AudioRecordingManagerType {
+protocol AudioRecorderManagerType {
     var state: AnyPublisher<AudioRecordingManagerState, Never> { get }
+    func requestRecordPermission() async -> Bool
     func start()
     func stop()
 }
 
-final class AudioRecordingManager: NSObject, AudioRecordingManagerType {
+final class AudioRecorderManager: NSObject, AudioRecorderManagerType {
     
     init(audioSession: AudioSessionType,
          audioRecorderFactory: AudioRecorderFactoryType,
          fileManager: FileManagerType,
-         dateProvider: DateProviderType) {
+         dateProvider: DateProviderType,
+         audioApplication: AudioApplicationType.Type) {
         self.audioSession = audioSession
         self.audioRecorderFactory = audioRecorderFactory
         self.fileManager = fileManager
         self.dateProvider = dateProvider
+        self.audioApplication = audioApplication
         
         super.init()
         setupAudioSession()
@@ -63,9 +66,11 @@ final class AudioRecordingManager: NSObject, AudioRecordingManagerType {
     
     func stop() {
         audioRecorder?.stop()
-        audioRecorder = nil
     }
     
+    func requestRecordPermission() async -> Bool {
+        await audioApplication.requestRecordPermission()
+    }
     
     // MARK: - Privates
     private let stateSubject: CurrentValueSubject<AudioRecordingManagerState, Never> = .init(.idle)
@@ -77,6 +82,8 @@ final class AudioRecordingManager: NSObject, AudioRecordingManagerType {
     
     private let fileManager: FileManagerType
     private let dateProvider: DateProviderType
+    
+    private let audioApplication: AudioApplicationType.Type
     
     private func setupAudioSession() {
         do {
@@ -94,8 +101,11 @@ final class AudioRecordingManager: NSObject, AudioRecordingManagerType {
     }
 }
 
-extension AudioRecordingManager: AVAudioRecorderDelegate {
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        stateSubject.send(.idle)
+extension AudioRecorderManager: AVAudioRecorderDelegate {
+    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        Task {
+            try? await Task.sleep(for: .milliseconds(200))
+            stateSubject.send(.idle)
+        }
     }
 }

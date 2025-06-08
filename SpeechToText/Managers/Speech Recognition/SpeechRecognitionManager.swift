@@ -12,9 +12,9 @@ protocol SpeechRecognitionManagerType {
     var state: AnyPublisher<SpeechRecognitionManagerResult, Never> { get }
     
     func requestPermissions() async -> Bool
+    func transcribeAudioFile(url: URL)
     func start()
     func stop()
-    func transcribeAudioFile(url: URL)
 }
 
 final class SpeechRecognitionManager: SpeechRecognitionManagerType {
@@ -90,9 +90,9 @@ final class SpeechRecognitionManager: SpeechRecognitionManagerType {
             stateSubject.send(.error(.recognizerUnavailable))
             return
         }
-        
         let request = requestFactory.createURLRequest(url: url)
         request.shouldReportPartialResults = false
+        request.requiresOnDeviceRecognition = true
         
         recognitionTask = speechRecognizer.speechRecognitionTask(with: request.underlyingRequest) { [weak self] result, error in
             guard let self else { return }
@@ -108,7 +108,6 @@ final class SpeechRecognitionManager: SpeechRecognitionManagerType {
                 words: result.words,
                 fullText: result.bestFormattedString
             )
-            
             stateSubject.send(.transcribing(result: transcriptionResult))
         }
     }
@@ -143,9 +142,7 @@ final class SpeechRecognitionManager: SpeechRecognitionManagerType {
             stateSubject.send(.error(.transcriptionFailed(error.localizedDescription)))
             stopLiveTranscription()
             return
-        }
-        
-        if let result = result {
+        } else if let result = result {
             let transcriptionResult = TranscriptionResult(
                 words: result.words,
                 fullText: result.bestFormattedString

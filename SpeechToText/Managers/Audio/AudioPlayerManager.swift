@@ -33,15 +33,13 @@ final class AudioPlayerManager: NSObject, AudioPlayerManagerType {
             stateSubject.send(.error(.playbackFailed))
         }
         audioPlayer?.delegate = self
-        audioPlayer?.play()
         stateSubject.send(.playing(playbackTime: 0))
+        audioPlayer?.play()
         startPlaybackTimer()
     }
     
     func stop() {
         audioPlayer?.stop()
-        audioPlayer?.delegate = nil
-        audioPlayer = nil
         stopPlaybackTimer()
     }
     
@@ -75,6 +73,7 @@ final class AudioPlayerManager: NSObject, AudioPlayerManagerType {
 
 extension AudioPlayerManager: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        stop()
         stateSubject.send(.idle)
     }
 }

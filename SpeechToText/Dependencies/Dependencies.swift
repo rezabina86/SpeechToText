@@ -20,11 +20,12 @@ public func injectDependencies(into container: ContainerType) {
                            timerFactory: container.resolve())
     }
     
-    container.register { container -> AudioRecordingManagerType in
-        AudioRecordingManager(audioSession: container.resolve(),
+    container.register { container -> AudioRecorderManagerType in
+        AudioRecorderManager(audioSession: container.resolve(),
                               audioRecorderFactory: container.resolve(),
                               fileManager: container.resolve(),
-                              dateProvider: container.resolve())
+                              dateProvider: container.resolve(),
+                              audioApplication: container.resolve())
     }
     
     container.register { _ -> AudioEngineType in
@@ -59,5 +60,15 @@ public func injectDependencies(into container: ContainerType) {
     
     container.register { _ -> TimerFactoryType in
         TimerFactory()
+    }
+    
+    container.register { _ -> AudioApplicationType.Type in
+        AVAudioApplication.self
+    }
+    
+    container.register { container -> AppViewModelFactoryType in
+        AppViewModelFactory(audioPlayerManager: container.resolve(),
+                            audioRecorderManager: container.resolve(),
+                            speechRecognitionManager: container.resolve())
     }
 }

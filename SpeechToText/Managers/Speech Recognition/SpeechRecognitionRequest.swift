@@ -3,14 +3,14 @@ import AVFoundation
 import Speech
 
 protocol SpeechAudioBufferRecognitionRequestType {
-    var underlyingRequest: SFSpeechRecognitionRequest { get }
+    var underlyingRequest: SFSpeechAudioBufferRecognitionRequest { get }
     var shouldReportPartialResults: Bool { get set }
     func append(_ audioPCMBuffer: AVAudioPCMBuffer)
     func endAudio()
 }
 
 extension SFSpeechAudioBufferRecognitionRequest: SpeechAudioBufferRecognitionRequestType {
-    var underlyingRequest: SFSpeechRecognitionRequest {
+    var underlyingRequest: SFSpeechAudioBufferRecognitionRequest {
         return self
     }
 }
@@ -18,12 +18,13 @@ extension SFSpeechAudioBufferRecognitionRequest: SpeechAudioBufferRecognitionReq
 protocol SpeechURLRecognitionRequestType: AnyObject {
     var url: URL { get }
     var shouldReportPartialResults: Bool { get set }
-    var underlyingRequest: SFSpeechRecognitionRequest { get }
+    var requiresOnDeviceRecognition: Bool { get set }
+    var underlyingRequest: SFSpeechURLRecognitionRequest { get }
 }
 
 extension SFSpeechURLRecognitionRequest: SpeechURLRecognitionRequestType {
-    var underlyingRequest: SFSpeechRecognitionRequest {
-        self
+    var underlyingRequest: SFSpeechURLRecognitionRequest {
+        return self
     }
 }
 
