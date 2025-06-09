@@ -92,7 +92,7 @@ final class SpeechRecognitionManager: SpeechRecognitionManagerType {
         }
         let request = requestFactory.createURLRequest(url: url)
         request.shouldReportPartialResults = false
-        request.requiresOnDeviceRecognition = true
+        request.requiresOnDeviceRecognition = false
         
         recognitionTask = speechRecognizer.speechRecognitionTask(with: request.underlyingRequest) { [weak self] result, error in
             guard let self else { return }

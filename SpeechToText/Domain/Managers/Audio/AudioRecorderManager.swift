@@ -104,7 +104,7 @@ final class AudioRecorderManager: NSObject, AudioRecorderManagerType {
 extension AudioRecorderManager: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         Task {
-            try? await Task.sleep(for: .milliseconds(200))
+            try? await Task.sleep(for: .seconds(1))
             stateSubject.send(.idle)
         }
     }

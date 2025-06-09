@@ -67,8 +67,12 @@ public func injectDependencies(into container: ContainerType) {
     }
     
     container.register { container -> AppViewModelFactoryType in
-        AppViewModelFactory(audioPlayerManager: container.resolve(),
-                            audioRecorderManager: container.resolve(),
-                            speechRecognitionManager: container.resolve())
+        AppViewModelFactory(speechRecognitionUseCase: container.resolve())
+    }
+    
+    container.register { container -> SpeechRecognitionUseCaseType in
+        SpeechRecognitionUseCase(audioPlayerManager: container.resolve(),
+                                 audioRecorderManager: container.resolve(),
+                                 speechRecognitionManager: container.resolve())
     }
 }
