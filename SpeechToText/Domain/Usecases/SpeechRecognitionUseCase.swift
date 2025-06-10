@@ -109,7 +109,6 @@ extension SpeechRecognitionUseCase {
             transcriptionResult,
             highlightedWordIndex
         )
-        .receive(on: DispatchQueue.main)
         .map { state, transResult, highlightedIndex -> SpeechRecognitionState in
             switch state {
             case .idle:

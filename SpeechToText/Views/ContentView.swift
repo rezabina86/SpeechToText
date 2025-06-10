@@ -37,7 +37,7 @@ struct ContentView: View {
             }
         }
         .padding()
-        .animation(.easeInOut(duration: 0.15), value: viewModel.viewState)
+        .animation(.smooth(duration: 0.25), value: viewModel.viewState)
     }
     
     @ViewBuilder

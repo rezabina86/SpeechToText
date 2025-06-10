@@ -21,6 +21,7 @@ final class AppViewModel: ObservableObject {
         self.speechRecognitionUseCase = speechRecognitionUseCase
         
         speechRecognitionUseCase.state
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
